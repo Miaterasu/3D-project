@@ -16,6 +16,7 @@ public class EnemyController : MonoBehaviour {
     public float attackCooldown = 0.5f;
     public float knockBackPower = 5f;
     public float immuneDuration = 0.5f;
+    public bool knockback = false;  
 
     public int hp = 50;
     public int power = 3;
@@ -104,8 +105,9 @@ public class EnemyController : MonoBehaviour {
         if (other.gameObject.CompareTag("PlayerAttack"))
         {
             if (!immune)
-            {
+            {   
                 hp -= other.gameObject.GetComponentInParent<PlayerController>().power;
+                knockback = false;
                 rb.AddForce(transform.forward * -knockBackPower, ForceMode.Acceleration);
                 immune = true;
             }
