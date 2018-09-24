@@ -19,7 +19,9 @@ public class PlayerController : MonoBehaviour {
     public int power = 5;
     public int numberOfJumps = 1;
 
-    Rigidbody rb;
+	public GameObject cam;
+
+	Rigidbody rb;
 
     float attackCooldownTimer = 0;
     float immuneTimer = 0;
@@ -46,8 +48,22 @@ public class PlayerController : MonoBehaviour {
 
     void MovementController()
     {
+		
         //Movimenta o personagem com as setas e WASD
-        rb.AddRelativeForce (Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"), ForceMode.Impulse);
+		Vector3 camF = Camera.main.transform.forward;
+		camF = camF.normalized;
+		Vector3 camR = Camera.main.transform.right;
+		camR = camR.normalized; 
+
+
+		Vector3 input = new Vector3 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"),0);
+		//input = Vector2.ClampMagnitude (input, 1);
+		transform.position += (camR * input.x + camF * input.y) * moveSpeed* Time.deltaTime;
+		transform.rotation = Quaternion.RotateTowards (transform.rotation, Camera.main.transform.rotation, Time.deltaTime * 1000f); 
+			//Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (cam.transform.position.z,cam.transform.position.y), Time.deltaTime* 5f);
+		transform.rotation = Quaternion.Euler (new Vector3 (0, transform.rotation.eulerAngles.y, 0));
+
+		//rb.AddRelativeForce (camR.x * input.x, 0f, camF.y*input.y, ForceMode.Impulse);
 
         //Clampa a velocidade pra não sair Sanicando por aí
         rb.velocity = new Vector3 (Mathf.Clamp(rb.velocity.x, -moveSpeed, moveSpeed),
